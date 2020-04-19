@@ -1,12 +1,14 @@
 import random
-from tkinter import Frame, Label, CENTER
+from tkinter import *
 
 import logic
 import constants as c
 
+EXITCODE = True
 
 class GameGrid(Frame):
     def __init__(self):
+        self.root = Tk()
         Frame.__init__(self)
 
         self.grid()
@@ -27,6 +29,10 @@ class GameGrid(Frame):
         self.update_grid_cells()
 
         self.mainloop()
+        
+    def quitting(self):
+        self.root.destroy()
+
 
     def init_grid(self):
         background = Frame(self, bg=c.BACKGROUND_COLOR_GAME,
@@ -80,6 +86,7 @@ class GameGrid(Frame):
         elif key in self.commands:
             self.matrix, done = self.commands[repr(event.char)](self.matrix)
             if done:
+                global EXITCODE
                 self.matrix = logic.add_two(self.matrix)
                 # record last move
                 self.history_matrixs.append(self.matrix)
@@ -87,20 +94,18 @@ class GameGrid(Frame):
                 done = False
                 if logic.game_state(self.matrix) == 'win':
                     self.grid_cells[1][1].configure(
-                        text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
-                    self.grid_cells[1][2].configure(
-                        text="Win!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+                        text="Won", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+                    EXITCODE = False
+                    self.quitting()
                 if logic.game_state(self.matrix) == 'lose':
                     self.grid_cells[1][1].configure(
-                        text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
-                    self.grid_cells[1][2].configure(
-                        text="Lose!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+                        text="Lost", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+                    EXITCODE = True
+                    self.quitting()
+                    
 
     def generate_next(self):
         index = (self.gen(), self.gen())
         while self.matrix[index[0]][index[1]] != 0:
             index = (self.gen(), self.gen())
         self.matrix[index[0]][index[1]] = 2
-
-
-gamegrid = GameGrid()
