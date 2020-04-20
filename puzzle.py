@@ -13,6 +13,11 @@ class GameGrid(Frame):
         self.root = Tk()
         Frame.__init__(self)
 
+        global EXITCODE
+        global LOOP_ACTIVE
+        EXITCODE = True
+        LOOP_ACTIVE = True
+
         self.grid()
         self.master.title('2048')
         #self.master.bind("<Key>", self.key_down)
@@ -29,10 +34,14 @@ class GameGrid(Frame):
         self.init_grid()
         self.init_matrix()
         self.update_grid_cells()
-        while LOOP_ACTIVE:
-            print(self.commands)
-            self.key_down(neuralNetwork()[0])
-            self.root.update()
+
+        while EXITCODE == True:
+
+
+            self.key_down(neuralNetwork())
+            if(EXITCODE == True):
+                print("oi")
+                self.root.update()
         
     def quitting(self):
         self.root.destroy()
@@ -83,9 +92,7 @@ class GameGrid(Frame):
 
     def key_down(self, event):
         key = event
-        print('entrou 0')
         if key in self.commands:
-            print('entrou 1')
             self.matrix, done = self.commands[key](self.matrix)
             if done:
                 global EXITCODE
