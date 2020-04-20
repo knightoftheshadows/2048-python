@@ -1,9 +1,8 @@
 import puzzle as p
 import constants as c
-from logic import MATRIX
 import random
 
-def nn1():
+def nn1(mat):
     if (random.random()  > 0.75):
         return 'a'
     elif (random.random()  < 0.25):
@@ -13,9 +12,8 @@ def nn1():
     else:
         return 'w'
 
-
-
-while(str(p.EXITCODE) != str(c.WINAT)):
-    OBJ = p.GameGrid(nn1)
+while(str(p.EXITCODE) != str(22)):
+    
+    OBJ = p.GameGrid(nn)
     print(p.EXITCODE)
 

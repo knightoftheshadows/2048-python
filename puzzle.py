@@ -36,11 +36,9 @@ class GameGrid(Frame):
         self.update_grid_cells()
 
         while EXITCODE == True:
-
-
-            self.key_down(neuralNetwork())
+            self.key_down(neuralNetwork(self.matrix))
+            print(self.matrix)
             if(EXITCODE == True):
-                print("oi")
                 self.root.update()
         
     def quitting(self):
@@ -103,12 +101,12 @@ class GameGrid(Frame):
                 done = False
                 if logic.game_state(self.matrix) == 'win':
                     self.grid_cells[1][1].configure(text="Won", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
-                    EXITCODE = logic.game_state(self.matrix)
+                    EXITCODE = logic.game_score(self.matrix)
                     self.quitting()
                 elif(logic.game_state(self.matrix) == 'not over'):
                     None
                 else:
-                    EXITCODE = logic.game_state(self.matrix)
+                    EXITCODE = logic.game_score(self.matrix)
                     self.quitting()
                     
 

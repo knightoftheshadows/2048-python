@@ -18,8 +18,6 @@ import constants as c
 # Matrix elements must be equal but not identical
 # 1 mark for creating the correct matrix
 
-MATRIX = 0
-
 def new_game(n):
     matrix = []
 
@@ -62,14 +60,17 @@ def game_score(mat):
     scoremax = 0
     for i in range(len(mat)):
         for j in range(len(mat[0])):
-            if mat[i][j] > scoremax:
-                scoremax = mat[i][j]
+                scoremax += mat[i][j]
     return scoremax
 
 def game_state(mat):
-    MATRIX = mat
-    if (game_score(mat) >= c.WINAT):
-                return game_score(mat)
+    fakescore = 0
+    for i in range(len(mat)):
+        for j in range(len(mat[0])):
+            if mat[i][j] > fakescore:
+                fakescore = mat[i][j]
+    if (fakescore >= c.WINAT):
+                return fakescore
     for i in range(len(mat)-1):
         # intentionally reduced to check the row on the right and below
         # more elegant to use exceptions but most likely this will be their solution
@@ -86,7 +87,7 @@ def game_state(mat):
     for j in range(len(mat)-1):  # check up/down entries on last column
         if mat[j][len(mat)-1] == mat[j+1][len(mat)-1]:
             return 'not over'
-    return str(game_score(mat))
+    return str(fakescore)
 
 ###########
 # Task 2a #
