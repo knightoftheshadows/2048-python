@@ -57,12 +57,17 @@ def add_two(mat):
 # 2 marks for getting two of the three conditions
 # 3 marks for correct checking
 
-
-def game_state(mat):
+def game_score(mat):
+    scoremax = 0
     for i in range(len(mat)):
         for j in range(len(mat[0])):
-            if mat[i][j] == c.WINAT:
-                return 'win'
+            if mat[i][j] > scoremax:
+                scoremax = mat[i][j]
+    return scoremax
+
+def game_state(mat):
+    if (game_score(mat) >= c.WINAT):
+                return game_score(mat)
     for i in range(len(mat)-1):
         # intentionally reduced to check the row on the right and below
         # more elegant to use exceptions but most likely this will be their solution
@@ -79,7 +84,7 @@ def game_state(mat):
     for j in range(len(mat)-1):  # check up/down entries on last column
         if mat[j][len(mat)-1] == mat[j+1][len(mat)-1]:
             return 'not over'
-    return 'lose'
+    return str(game_score(mat))
 
 ###########
 # Task 2a #

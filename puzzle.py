@@ -95,12 +95,12 @@ class GameGrid(Frame):
                 if logic.game_state(self.matrix) == 'win':
                     self.grid_cells[1][1].configure(
                         text="Won", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
-                    EXITCODE = False
+                    EXITCODE = logic.game_state(self.matrix)
                     self.quitting()
-                if logic.game_state(self.matrix) == 'lose':
-                    self.grid_cells[1][1].configure(
-                        text="Lost", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
-                    EXITCODE = True
+                elif(logic.game_state(self.matrix) == 'not over'):
+                    None
+                else:
+                    EXITCODE = logic.game_state(self.matrix)
                     self.quitting()
                     
 
