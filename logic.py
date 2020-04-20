@@ -18,6 +18,7 @@ import constants as c
 # Matrix elements must be equal but not identical
 # 1 mark for creating the correct matrix
 
+MATRIX = 0
 
 def new_game(n):
     matrix = []
@@ -66,6 +67,7 @@ def game_score(mat):
     return scoremax
 
 def game_state(mat):
+    MATRIX = mat
     if (game_score(mat) >= c.WINAT):
                 return game_score(mat)
     for i in range(len(mat)-1):

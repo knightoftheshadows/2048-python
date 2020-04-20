@@ -1,19 +1,21 @@
 import random
 from tkinter import *
 
+import os
 import logic
 import constants as c
 
 EXITCODE = True
+LOOP_ACTIVE = True
 
 class GameGrid(Frame):
-    def __init__(self):
+    def __init__(self, neuralNetwork):
         self.root = Tk()
         Frame.__init__(self)
 
         self.grid()
         self.master.title('2048')
-        self.master.bind("<Key>", self.key_down)
+        #self.master.bind("<Key>", self.key_down)
 
         # self.gamelogic = gamelogic
         self.commands = {c.KEY_UP: logic.up, c.KEY_DOWN: logic.down,
@@ -27,8 +29,10 @@ class GameGrid(Frame):
         self.init_grid()
         self.init_matrix()
         self.update_grid_cells()
-
-        self.mainloop()
+        while LOOP_ACTIVE:
+            print(self.commands)
+            self.key_down(neuralNetwork()[0])
+            self.root.update()
         
     def quitting(self):
         self.root.destroy()
@@ -78,13 +82,11 @@ class GameGrid(Frame):
         self.update_idletasks()
 
     def key_down(self, event):
-        key = repr(event.char)
-        if key == c.KEY_BACK and len(self.history_matrixs) > 1:
-            self.matrix = self.history_matrixs.pop()
-            self.update_grid_cells()
-            print('back on step total step:', len(self.history_matrixs))
-        elif key in self.commands:
-            self.matrix, done = self.commands[repr(event.char)](self.matrix)
+        key = event
+        print('entrou 0')
+        if key in self.commands:
+            print('entrou 1')
+            self.matrix, done = self.commands[key](self.matrix)
             if done:
                 global EXITCODE
                 self.matrix = logic.add_two(self.matrix)
@@ -93,8 +95,7 @@ class GameGrid(Frame):
                 self.update_grid_cells()
                 done = False
                 if logic.game_state(self.matrix) == 'win':
-                    self.grid_cells[1][1].configure(
-                        text="Won", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+                    self.grid_cells[1][1].configure(text="Won", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
                     EXITCODE = logic.game_state(self.matrix)
                     self.quitting()
                 elif(logic.game_state(self.matrix) == 'not over'):
