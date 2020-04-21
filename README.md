@@ -6,14 +6,8 @@ Te idea is to use a genetic algorithm to train neural networks to play this game
 I'M STILL WORKING ON IT!
 NOT FINISHED YET!
 
-Recommendations and pull requests are welcomed.
+Recommendations and pull requests are welcome.
 
 To start the algorithm, run:
     
     $ python3 genetic.py
-
-
-Contributors:
-==
-
-- [Knight of the Shadows](http://github.com/knightoftheshadows)
