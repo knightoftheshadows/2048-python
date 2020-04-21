@@ -34,24 +34,28 @@ def fakenn(mat):
 
         return valid_chars[x]
 '''
-'''
-while(str(p.EXITCODE) != str(22)):
-    nn = Network()
-    #nn.setWeights()
-    OBJ = p.GameGrid(nn.forward)
+
+chromosome1 = torch.randn(2*c.GRID_LEN * c.GRID_LEN, c.GRID_LEN * c.GRID_LEN, dtype=torch.float)
+chromosome2 = torch.randn(c.GRID_LEN * c.GRID_LEN, 2*c.GRID_LEN * c.GRID_LEN, dtype=torch.float)
+
+
+while(str(p.EXITCODE) != str(c.END_SCORE)):
+    layers = []
+    layers.append(nn.Linear(c.GRID_LEN * c.GRID_LEN, 2*c.GRID_LEN * c.GRID_LEN))
+    layers.append(nn.Sigmoid())
+    layers.append(nn.Linear(2*c.GRID_LEN * c.GRID_LEN, 4))
+    layers.append(nn.Sigmoid())
+
+    net = nn.Sequential(*layers)
+
+    with torch.no_grad():
+        print(net[0])
+        print(net[0].weight)
+        print(net[2].weight)
+        net[0].weight = nn.Parameter(chromosome1)
+        net[2].weight = nn.Parameter(chromosome2)
+
+    OBJ = p.GameGrid(net)
     print(p.EXITCODE)
-'''
-layers = []
-layers.append(nn.Linear(c.GRID_LEN*c.GRID_LEN, 4*c.GRID_LEN*c.GRID_LEN))
-layers.append(nn.Sigmoid())
-layers.append(nn.Linear(4*c.GRID_LEN*c.GRID_LEN, 4))
-layers.append(nn.Sigmoid())
 
-net = nn.Sequential(*layers)
-
-with torch.no_grad():
-    net[0].weight = nn.Parameter(torch.ones_like(net[0].weight))
-    net[0].weight[0, 0] = 2.
-    net[0].weight.fill_(3.)
-
-print(net)
+    print(net)

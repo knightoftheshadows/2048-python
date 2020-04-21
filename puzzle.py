@@ -1,7 +1,7 @@
 import random
 from tkinter import *
 
-import os
+import torch as torch
 import logic
 import constants as c
 
@@ -36,14 +36,29 @@ class GameGrid(Frame):
         self.update_grid_cells()
 
         while EXITCODE == True:
-            self.key_down(neuralNetwork(self.matrix))
+            nnoutput = neuralNetwork(self.matrix2tensor(self.matrix))
+            self.key_down(self.nnoutput2char(nnoutput))
             print(self.matrix)
             if(EXITCODE == True):
                 self.root.update()
         
     def quitting(self):
         self.root.destroy()
+    def nnoutput2char(self, x):
+        x = x.tolist().index(max(x.tolist()))  # returns the index which has max probability
 
+        # transforms index into char
+        valid_chars = [c.KEY_LEFT, c.KEY_DOWN, c.KEY_RIGHT, c.KEY_UP]
+
+        return valid_chars[x]
+
+    def matrix2tensor(self, matrix):
+        y = []
+        for i in matrix:
+            for e in i:
+                y.append(float(e))
+        y = torch.FloatTensor(y)
+        return y
 
     def init_grid(self):
         background = Frame(self, bg=c.BACKGROUND_COLOR_GAME,
