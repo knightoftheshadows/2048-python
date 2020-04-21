@@ -1,17 +1,13 @@
-2048-python
+Genetic NN 2048-python
 ===========
 
-Based on the popular game [2048](https://github.com/gabrielecirulli/2048) by Gabriele Cirulli. The game's objective is to slide numbered tiles on a grid to combine them to create a tile with the number 2048. Here is a Python version that uses TKinter! 
+Te idea is to use a genetic algorithm to train neural networks to play this game called 2048. 
 
-![screenshot](img/screenshot.png)
+I'M STILL WORKING ON IT!
+NOT FINISHED YET!
 
-To start the game, run:
+Recommendations and pull requests are welcome.
+
+To start the algorithm, run:
     
-    $ python3 puzzle.py
-
-
-Contributors:
-==
-
-- [Tay Yang Shun](http://github.com/yangshun)
-- [Emmanuel Goh](http://github.com/emman27)
+    $ python3 genetic.py
