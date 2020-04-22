@@ -73,7 +73,7 @@ class Population:
     def printPopulation(self, genNumber):
         print("\n----------------------------------------------------")
         print("Generation:", genNumber, " Fittest:", self.getChromosomes()[0].getFitness(), " Goal:",
-              c.CHROMOSOME_LEN)
+              c.END_SCORE)
         print("\n----------------------------------------------------")
         i = 0
         for x in self.getChromosomes():
@@ -145,7 +145,7 @@ population.getChromosomes()
 while genNumber < c.GEN_MAX and population.getChromosomes()[0].getFitness() < c.CHROMOSOME_LEN:
     population = GeneticAlgorithm.evolve(population)
     population.getChromosomes()
-    if(genNumber % 10 == 0):
+    if(genNumber % 100 == 0):
         population.printPopulation(genNumber)
     genNumber += 1
 
