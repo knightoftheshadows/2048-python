@@ -145,7 +145,7 @@ population.getChromosomes().sort(key = lambda x: x.getFitness(), reverse = True)
 while genNumber < c.GEN_MAX and population.getChromosomes()[0].getFitness() < c.CHROMOSOME_LEN:
     population = GeneticAlgorithm.evolve(population)
     population.getChromosomes().sort(key = lambda x: x.getFitness(), reverse = True)
-    if(genNumber % 100 == 0):
+    if(genNumber % 10 == 0):
         population.printPopulation(genNumber)
     genNumber += 1
 

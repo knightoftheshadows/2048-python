@@ -13,9 +13,6 @@ class GameGrid(Frame):
 
         self.grid()
         self.master.title('2048')
-        #self.master.bind("<Key>", self.key_down)
-
-        # self.gamelogic = gamelogic
         self.commands = {c.KEY_UP: logic.up, c.KEY_DOWN: logic.down,
                          c.KEY_LEFT: logic.left, c.KEY_RIGHT: logic.right,
                          c.KEY_UP_ALT: logic.up, c.KEY_DOWN_ALT: logic.down,
@@ -27,11 +24,17 @@ class GameGrid(Frame):
         self.init_grid()
         self.init_matrix()
         self.update_grid_cells()
+        self.didNothing = 0
 
         while self.EXITCODE == True:
+            self.previousMatrix = self.matrix
             nnoutput = neuralNetwork(self.matrix2tensor(self.matrix))
             self.key_down(self.nnoutput2char(nnoutput))
             print(self.matrix)
+            if(self.matrix == self.previousMatrix):
+                self.didNothing += 1
+                if(self.didNothing>c.DONOTHINGINPUT_MAX):
+                    self.EXITCODE = logic.game_score(self.matrix)
             if(self.EXITCODE == True):
                 self.root.update()
         
