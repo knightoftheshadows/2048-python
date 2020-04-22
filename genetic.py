@@ -31,23 +31,37 @@ def chromosome2tensor(chromosome):
 
 class Chromosome:
     def __init__(self):
-        self.genes = []
+        self.genes = np.random.rand(c.CHROMOSOME_LEN)
         self.fitness = 0
-        for i in range(CHROMOSOME_LEN):
-            if random.random() >= 0.5:
-                self.genes.append(1)
-            else:
-                self.genes.append(0)
+        self.gotFitness = False
 
     def getGenes(self):
         return self.genes
 
     def getFitness(self):
-        self.fitness = 0
-        for i in range(c.CHROMOSOME_LEN):
-            if self.genes[i] == TARGET_CHROMOSOME[i]:
-                self.fitness += 1
-        return self.fitness
+        if self.gotFitness:
+            return self.fitness
+        else:
+            self.fitness = 0
+            layers = []
+            layers.append(nn.Linear(c.GRID_LEN * c.GRID_LEN, 2 * c.GRID_LEN * c.GRID_LEN))
+            layers.append(nn.Sigmoid())
+            layers.append(nn.Linear(2 * c.GRID_LEN * c.GRID_LEN, 4))
+            layers.append(nn.Sigmoid())
+
+            net = nn.Sequential(*layers)
+
+            with torch.no_grad():
+                print(net[0].weight)
+                print(net[2].weight)
+                x, y = chromosome2tensor(self.genes)
+                net[0].weight = nn.Parameter(x)
+                net[2].weight = nn.Parameter(y)
+
+            game = p.GameGrid(net) #runs the game with neural network controlling it
+            self.fitness = game.EXITCODE
+            self.gotFitness = True
+            return self.fitness
 
 
 class Population:
@@ -56,7 +70,19 @@ class Population:
         for i in range(size):
             self.chromosomes.append(Chromosome())
 
-    def getChromosomes(self): return self.chromosomes
+    def getChromosomes(self):
+        return sorted(self.chromosomes, key = lambda x: x.getFitness(), reverse=True)
+
+
+    def printPopulation(self, genNumber):
+        print("\n----------------------------------------------------")
+        print("Generation:", genNumber, " Fittest:", self.getChromosomes()[0].getFitness(), " Goal:",
+              c.CHROMOSOME_LEN)
+        print("\n----------------------------------------------------")
+        i = 0
+        for x in self.getChromosomes():
+            print("Chromosome #", i, " :", x, "| Fitness:", x.getFitness())
+            i += 1
 
 
 class GeneticAlgorithm:
@@ -66,17 +92,17 @@ class GeneticAlgorithm:
 
     @staticmethod
     def mutatePopulation(pop):
-        for i in range(NUMBER_OF_ELITE_CHROMOSOMES, POPULATION_SIZE):
+        for i in range(c.NUMBER_OF_ELITE_CHROMOSOMES, c.POPULATION_SIZE):
             GeneticAlgorithm.mutateChromosome(pop.getChromosomes()[i])
         return pop
 
     @staticmethod
     def crossoverPopulation(pop):
         crossoverPopulation = Population(0)
-        for i in range(NUMBER_OF_ELITE_CHROMOSOMES):
+        for i in range(c.NUMBER_OF_ELITE_CHROMOSOMES):
             crossoverPopulation.getChromosomes().append(pop.getChromosomes()[i])
-        i = NUMBER_OF_ELITE_CHROMOSOMES
-        while i < POPULATION_SIZE:
+        i = c.NUMBER_OF_ELITE_CHROMOSOMES
+        while i < c.POPULATION_SIZE:
             chromosome1 = GeneticAlgorithm.selectTournamentPopulation(pop).getChromosomes()[0]
             chromosome2 = GeneticAlgorithm.selectTournamentPopulation(pop).getChromosomes()[0]
             crossoverPopulation.getChromosomes().append(GeneticAlgorithm.crossoverChromosomes(chromosome1, chromosome2))
@@ -96,7 +122,7 @@ class GeneticAlgorithm:
     @staticmethod
     def mutateChromosome(chromosome):
         for i in range(c.CHROMOSOME_LEN):
-            if random.random() < MUTATION_RATE:
+            if random.random() < c.MUTATION_RATE:
                 if chromosome.getGenes()[i] == 0:
                     chromosome.getGenes()[i] = 1
                 else:
@@ -106,32 +132,21 @@ class GeneticAlgorithm:
     def selectTournamentPopulation(pop):
         tournamentPop = Population(0)
         i = 0
-        while i < TOURNAMENT_SELECTION_SIZE:
-            tournamentPop.getChromosomes().append(pop.getChromosomes()[random.randrange(0, POPULATION_SIZE)])
+        while i < c.TOURNAMENT_SELECTION_SIZE:
+            tournamentPop.getChromosomes().append(pop.getChromosomes()[random.randrange(0, c.POPULATION_SIZE)])
             i += 1
         tournamentPop.getChromosomes().sort(key=lambda x: x.getFitness(), reverse=True)
         return tournamentPop
 
+population = Population(c.POPULATION_SIZE)
+genNumber = 0
+population.getChromosomes().sort(key = lambda x: x.getFitness(), reverse = True)
 
-chromosome = np.random.rand(c.CHROMOSOME_LEN)
+while genNumber < c.GEN_MAX and population.getChromosomes()[0].getFitness() < c.CHROMOSOME_LEN:
+    population = GeneticAlgorithm.evolve(population)
+    population.getChromosomes().sort(key = lambda x: x.getFitness(), reverse = True)
+    if(genNumber % 100 == 0):
+        population.printPopulation(genNumber)
+    genNumber += 1
 
-while(str(p.EXITCODE) != str(c.END_SCORE)):
-    layers = []
-    layers.append(nn.Linear(c.GRID_LEN * c.GRID_LEN, 2*c.GRID_LEN * c.GRID_LEN))
-    layers.append(nn.Sigmoid())
-    layers.append(nn.Linear(2*c.GRID_LEN * c.GRID_LEN, 4))
-    layers.append(nn.Sigmoid())
-
-    net = nn.Sequential(*layers)
-
-    with torch.no_grad():
-        print(net[0].weight)
-        print(net[2].weight)
-        x,y = chromosome2tensor(chromosome)
-        net[0].weight = nn.Parameter(x)
-        net[2].weight = nn.Parameter(y)
-
-    OBJ = p.GameGrid(net)
-    print(p.EXITCODE)
-
-    print(net)
+population.printPopulation(genNumber)

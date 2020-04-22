@@ -5,18 +5,11 @@ import torch as torch
 import logic
 import constants as c
 
-EXITCODE = True
-LOOP_ACTIVE = True
-
 class GameGrid(Frame):
     def __init__(self, neuralNetwork):
         self.root = Tk()
         Frame.__init__(self)
-
-        global EXITCODE
-        global LOOP_ACTIVE
-        EXITCODE = True
-        LOOP_ACTIVE = True
+        self.EXITCODE = True
 
         self.grid()
         self.master.title('2048')
@@ -35,11 +28,11 @@ class GameGrid(Frame):
         self.init_matrix()
         self.update_grid_cells()
 
-        while EXITCODE == True:
+        while self.EXITCODE == True:
             nnoutput = neuralNetwork(self.matrix2tensor(self.matrix))
             self.key_down(self.nnoutput2char(nnoutput))
             print(self.matrix)
-            if(EXITCODE == True):
+            if(self.EXITCODE == True):
                 self.root.update()
         
     def quitting(self):
@@ -116,12 +109,12 @@ class GameGrid(Frame):
                 done = False
                 if logic.game_state(self.matrix) == 'win':
                     self.grid_cells[1][1].configure(text="Won", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
-                    EXITCODE = logic.game_score(self.matrix)
+                    self.EXITCODE = logic.game_score(self.matrix)
                     self.quitting()
                 elif(logic.game_state(self.matrix) == 'not over'):
                     None
                 else:
-                    EXITCODE = logic.game_score(self.matrix)
+                    self.EXITCODE = logic.game_score(self.matrix)
                     self.quitting()
                     
 
