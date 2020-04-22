@@ -18,7 +18,7 @@ def chromosome2tensor(chromosome):
             last += 1
         x.append(temp)
 
-    for i in range( c.GRID_LEN * c.GRID_LEN):
+    for i in range(4):
         temp = []
         for j in range(2*c.GRID_LEN * c.GRID_LEN):
             temp.append(float(chromosome[last + i + j]))
@@ -44,7 +44,7 @@ class Chromosome:
 
     def getFitness(self):
         self.fitness = 0
-        for i in range(CHROMOSOME_LEN):
+        for i in range(c.CHROMOSOME_LEN):
             if self.genes[i] == TARGET_CHROMOSOME[i]:
                 self.fitness += 1
         return self.fitness
@@ -86,7 +86,7 @@ class GeneticAlgorithm:
     @staticmethod
     def crossoverChromosomes(chromosome1, chromosome2):
         crossoverChromosome = Chromosome()
-        for i in range(CHROMOSOME_LEN):
+        for i in range(c.CHROMOSOME_LEN):
             if random.random() > 0.5:
                 crossoverChromosome.getGenes()[i] = chromosome1.getGenes()[i]
             else:
@@ -95,7 +95,7 @@ class GeneticAlgorithm:
 
     @staticmethod
     def mutateChromosome(chromosome):
-        for i in range(CHROMOSOME_LEN):
+        for i in range(c.CHROMOSOME_LEN):
             if random.random() < MUTATION_RATE:
                 if chromosome.getGenes()[i] == 0:
                     chromosome.getGenes()[i] = 1
