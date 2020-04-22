@@ -23,8 +23,8 @@ def chromosome2tensor(chromosome):
         for j in range(2*c.GRID_LEN * c.GRID_LEN):
             temp.append(float(chromosome[last + i + j]))
         y.append(temp)
-    x = torch.FloatTensor(x)
-    y = torch.FloatTensor(y)
+    x = torch.cuda.FloatTensor(x)
+    y = torch.cuda.FloatTensor(y)
     print(x)
     print(y)
     return x, y

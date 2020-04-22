@@ -53,7 +53,7 @@ class GameGrid(Frame):
         for i in matrix:
             for e in i:
                 y.append(float(e))
-        y = torch.FloatTensor(y)
+        y = torch.cuda.FloatTensor(y)
         return y
 
     def init_grid(self):
