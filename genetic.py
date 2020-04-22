@@ -50,6 +50,7 @@ class Chromosome:
             layers.append(nn.Sigmoid())
 
             net = nn.Sequential(*layers)
+            net = net.cuda()
 
             with torch.no_grad():
                 print(net[0].weight)
@@ -62,7 +63,6 @@ class Chromosome:
             self.fitness = game.EXITCODE
             self.gotFitness = True
             return self.fitness
-
 
 class Population:
     def __init__(self, size):
