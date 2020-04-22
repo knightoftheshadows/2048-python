@@ -84,6 +84,10 @@ class Population:
             print("Chromosome #", i, " :", x, "| Fitness:", x.getFitness())
             i += 1
 
+    def appendChromosome(self, chromosome):
+        self.chromosomes.append(chromosome)
+        return self.getChromosomes()
+
 
 class GeneticAlgorithm:
     @staticmethod
@@ -100,12 +104,13 @@ class GeneticAlgorithm:
     def crossoverPopulation(pop):
         crossoverPopulation = Population(0)
         for i in range(c.NUMBER_OF_ELITE_CHROMOSOMES):
-            crossoverPopulation.getChromosomes().append(pop.getChromosomes()[i])
+            crossoverPopulation.appendChromosome(pop.getChromosomes()[i])
         i = c.NUMBER_OF_ELITE_CHROMOSOMES
         while i < c.POPULATION_SIZE:
+            print(len(GeneticAlgorithm.selectTournamentPopulation(pop).getChromosomes()))
             chromosome1 = GeneticAlgorithm.selectTournamentPopulation(pop).getChromosomes()[0]
             chromosome2 = GeneticAlgorithm.selectTournamentPopulation(pop).getChromosomes()[0]
-            crossoverPopulation.getChromosomes().append(GeneticAlgorithm.crossoverChromosomes(chromosome1, chromosome2))
+            crossoverPopulation.appendChromosome(GeneticAlgorithm.crossoverChromosomes(chromosome1, chromosome2))
             i += 1
         return crossoverPopulation
 
@@ -132,15 +137,16 @@ class GeneticAlgorithm:
     def selectTournamentPopulation(pop):
         tournamentPop = Population(0)
         i = 0
+        print(len(pop.getChromosomes()))
         while i < c.TOURNAMENT_SELECTION_SIZE:
-            tournamentPop.getChromosomes().append(pop.getChromosomes()[random.randrange(0, c.POPULATION_SIZE)])
+            tournamentPop.appendChromosome(pop.getChromosomes()[random.randrange(0, c.POPULATION_SIZE)])
             i += 1
         tournamentPop.getChromosomes().sort(key=lambda x: x.getFitness(), reverse=True)
         return tournamentPop
 
 population = Population(c.POPULATION_SIZE)
 genNumber = 0
-population.getChromosomes().sort(key = lambda x: x.getFitness(), reverse = True)
+population.getChromosomes()
 
 while genNumber < c.GEN_MAX and population.getChromosomes()[0].getFitness() < c.CHROMOSOME_LEN:
     population = GeneticAlgorithm.evolve(population)
