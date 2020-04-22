@@ -33,13 +33,16 @@ class GameGrid(Frame):
             print(self.matrix)
             if(self.matrix == self.previousMatrix):
                 self.didNothing += 1
-                if(self.didNothing>c.DONOTHINGINPUT_MAX):
+                if(self.didNothing>=c.DONOTHINGINPUT_MAX):
                     self.EXITCODE = logic.game_score(self.matrix)
+            else:
+                self.didNothing = 0
             if(self.EXITCODE == True):
                 self.root.update()
         
     def quitting(self):
-        self.root.destroy()
+        self.destroy()
+
     def nnoutput2char(self, x):
         x = x.tolist().index(max(x.tolist()))  # returns the index which has max probability
 
