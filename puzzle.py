@@ -5,14 +5,9 @@ import torch as torch
 import logic
 import constants as c
 
-class GameGrid(Frame):
+class GameGrid():
     def __init__(self, neuralNetwork):
-        self.root = Tk()
-        Frame.__init__(self)
         self.EXITCODE = True
-
-        self.grid()
-        self.master.title('2048')
         self.commands = {c.KEY_UP: logic.up, c.KEY_DOWN: logic.down,
                          c.KEY_LEFT: logic.left, c.KEY_RIGHT: logic.right,
                          c.KEY_UP_ALT: logic.up, c.KEY_DOWN_ALT: logic.down,
@@ -21,24 +16,19 @@ class GameGrid(Frame):
                          c.KEY_K: logic.up, c.KEY_J: logic.down}
         
         self.grid_cells = []
-        self.init_grid()
         self.init_matrix()
-        self.update_grid_cells()
         self.didNothing = 0
 
         while self.EXITCODE == True:
             self.previousMatrix = self.matrix
             nnoutput = neuralNetwork(self.matrix2tensor(self.matrix))
             self.key_down(self.nnoutput2char(nnoutput))
-            print(self.matrix)
             if(self.matrix == self.previousMatrix):
                 self.didNothing += 1
                 if(self.didNothing>=c.DONOTHINGINPUT_MAX):
                     self.EXITCODE = logic.game_score(self.matrix)
             else:
                 self.didNothing = 0
-            if(self.EXITCODE == True):
-                self.root.update()
         
     def quitting(self):
         self.destroy()
@@ -111,18 +101,15 @@ class GameGrid(Frame):
                 self.matrix = logic.add_two(self.matrix)
                 # record last move
                 self.history_matrixs.append(self.matrix)
-                self.update_grid_cells()
                 done = False
                 if logic.game_state(self.matrix) == 'win':
                     self.grid_cells[1][1].configure(text="Won", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
                     self.EXITCODE = logic.game_score(self.matrix)
-                    self.quitting()
                 elif(logic.game_state(self.matrix) == 'not over'):
                     None
                 else:
                     self.EXITCODE = logic.game_score(self.matrix)
-                    self.quitting()
-                    
+
 
     def generate_next(self):
         index = (self.gen(), self.gen())

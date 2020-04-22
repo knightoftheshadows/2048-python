@@ -25,8 +25,6 @@ def chromosome2tensor(chromosome):
         y.append(temp)
     x = torch.cuda.FloatTensor(x)
     y = torch.cuda.FloatTensor(y)
-    print(x)
-    print(y)
     return x, y
 
 class Chromosome:
@@ -53,8 +51,6 @@ class Chromosome:
             net = net.cuda()
 
             with torch.no_grad():
-                print(net[0].weight)
-                print(net[2].weight)
                 x, y = chromosome2tensor(self.genes)
                 net[0].weight = nn.Parameter(x)
                 net[2].weight = nn.Parameter(y)
@@ -107,7 +103,6 @@ class GeneticAlgorithm:
             crossoverPopulation.appendChromosome(pop.getChromosomes()[i])
         i = c.NUMBER_OF_ELITE_CHROMOSOMES
         while i < c.POPULATION_SIZE:
-            print(len(GeneticAlgorithm.selectTournamentPopulation(pop).getChromosomes()))
             chromosome1 = GeneticAlgorithm.selectTournamentPopulation(pop).getChromosomes()[0]
             chromosome2 = GeneticAlgorithm.selectTournamentPopulation(pop).getChromosomes()[0]
             crossoverPopulation.appendChromosome(GeneticAlgorithm.crossoverChromosomes(chromosome1, chromosome2))
@@ -137,7 +132,6 @@ class GeneticAlgorithm:
     def selectTournamentPopulation(pop):
         tournamentPop = Population(0)
         i = 0
-        print(len(pop.getChromosomes()))
         while i < c.TOURNAMENT_SELECTION_SIZE:
             tournamentPop.appendChromosome(pop.getChromosomes()[random.randrange(0, c.POPULATION_SIZE)])
             i += 1
