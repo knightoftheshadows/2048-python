@@ -23,8 +23,12 @@ def chromosome2tensor(chromosome):
         for j in range(2*c.GRID_LEN * c.GRID_LEN):
             temp.append(float(chromosome[last + i + j]))
         y.append(temp)
-    x = torch.cuda.FloatTensor(x)
-    y = torch.cuda.FloatTensor(y)
+    if(torch.cuda.is_available()):
+        x = torch.cuda.FloatTensor(x)
+        y = torch.cuda.FloatTensor(y)
+    else:
+        x = torch.FloatTensor(x)
+        y = torch.FloatTensor(y)
     return x, y
 
 class Chromosome:
@@ -48,7 +52,8 @@ class Chromosome:
             layers.append(nn.Sigmoid())
 
             net = nn.Sequential(*layers)
-            net = net.cuda()
+            if (torch.cuda.is_available()):
+                net = net.cuda()
 
             with torch.no_grad():
                 x, y = chromosome2tensor(self.genes)
